@@ -10,6 +10,5 @@ namespace EscolaAPI.Services
         Task CreateAluno(Aluno aluno);
         Task DeleteAluno(Aluno aluno);
         Task UpdateAluno(Aluno aluno);
-
     }
 }
