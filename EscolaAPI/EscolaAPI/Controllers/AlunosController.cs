@@ -1,5 +1,7 @@
 ﻿using EscolaAPI.Models;
 using EscolaAPI.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -8,6 +10,7 @@ namespace EscolaAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     /*
      * Restringir tipo de resposta da API (json, xml) 
      * 
