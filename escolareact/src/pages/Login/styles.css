@@ -1,0 +1,15 @@
+#AllBody{
+    height: 100%;
+    background: linear-gradient(0deg, rgba(2, 1, 23, 0.4), rgba(2, 1, 23, 0.4)), 
+        url('../../assets/backgroundLogin.jpg') !important;
+}
+
+#AllBody .container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#Logo{
+    font-family: 'Changa', sans-serif;
+}
