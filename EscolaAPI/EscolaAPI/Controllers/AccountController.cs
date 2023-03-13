@@ -42,12 +42,14 @@ namespace EscolaAPI.Controllers
         }
 
         [HttpPost("LoginUser")]
-        public async Task<ActionResult<UserToken>> Login([FromBody] LoginModel userInfo)
+        public async Task<ActionResult> Login([FromBody] LoginModel userInfo)
         {
             var result = await _authentication.Authenticate(userInfo.Email, userInfo.Password);
 
             if (result)
+            {
                 return GenerateToken(userInfo);
+            }
             else
             {
                 ModelState.AddModelError("LoginUser", "Login inválido");
@@ -55,7 +57,7 @@ namespace EscolaAPI.Controllers
             }
         }
 
-        private ActionResult<UserToken> GenerateToken(LoginModel userInfo)
+        private ActionResult GenerateToken(LoginModel userInfo)
         {
             var claims = new[]
             {
@@ -79,11 +81,17 @@ namespace EscolaAPI.Controllers
                 signingCredentials: creds
             );
 
-            return new UserToken()
-            {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = expiration
-            };
+            Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+            Response.Cookies.Append("X-Access-Token", new JwtSecurityTokenHandler().WriteToken(token), 
+                new CookieOptions() { 
+                    HttpOnly = true,
+                    Expires = expiration,
+                    Secure = true,
+                    SameSite = SameSiteMode.None
+                }
+            );
+
+            return Ok();
         }
     }
 }

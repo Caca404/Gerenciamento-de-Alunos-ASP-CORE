@@ -1,7 +1,7 @@
 import './styles.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import axios from 'axios';
+import api from '../../services/api';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { useEffect, useState } from 'react';
 import Moment from 'moment/moment';
@@ -23,7 +23,7 @@ export default function Administrador() {
 	const [modalExcluir, setModalExcluir] = useState(false);
 
 	const pedidoGet = async () => {
-		await axios.get(baseUrl)
+		await api.get(baseUrl)
 			.then(response => setData(response.data))
 			.catch(error => console.log(error));
 	}
@@ -31,7 +31,7 @@ export default function Administrador() {
 	const pedidoPost = async () => {
 		delete alunoSelecionado.id;
 
-		await axios.post(baseUrl, alunoSelecionado)
+		await api.post(baseUrl, alunoSelecionado)
 			.then(response => {
 				setData(data.concat(response.data));
 				setUpdateData(true);
@@ -41,7 +41,7 @@ export default function Administrador() {
 
 	const pedidoPut = async () => {
 		alunoSelecionado.id = parseInt(alunoSelecionado.id);
-		await axios.put(baseUrl+"/"+alunoSelecionado.id, alunoSelecionado)
+		await api.put(baseUrl+"/"+alunoSelecionado.id, alunoSelecionado)
 			.then(response => {
 				var resposta = response.data;
 				var dataAuxiliar = data;
@@ -58,7 +58,7 @@ export default function Administrador() {
 	}
 
 	const pedidoDelete = async () => {
-		await axios.post(baseUrl+"/"+alunoSelecionado.id)
+		await api.post(baseUrl+"/"+alunoSelecionado.id)
 			.then(response => {
 				setData(data.filter(aluno => aluno.id !== response.data));
 				setUpdateData(true);

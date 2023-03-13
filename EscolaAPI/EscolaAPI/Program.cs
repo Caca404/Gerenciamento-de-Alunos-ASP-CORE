@@ -29,8 +29,12 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-{
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddCookie(options => {
+    options.Cookie.Name = "X-Access-Token";
+})
+.AddJwtBearer(options => {
+    options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -42,9 +46,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         IssuerSigningKey = new SymmetricSecurityKey
             (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            context.Token = context.Request.Cookies["X-Access-Token"];
+            return Task.CompletedTask;
+        }
+    };
+
 });
-
-
 
 builder.Services.AddControllers();
 
@@ -83,10 +95,12 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
-{
-    builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
-}));
+builder.Services.AddCors(p => 
+    p.AddPolicy("corsapp", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+    })
+);
 
 var app = builder.Build();
 
